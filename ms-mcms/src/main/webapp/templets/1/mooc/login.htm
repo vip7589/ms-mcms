@@ -1,0 +1,77 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <title>{ms:global.name/}</title>
+    <link rel="stylesheet" href="{ms:globalskin.url/}/css/gui.css">
+    <link rel="stylesheet" href="{ms:globalskin.url/}/css/login-reg.css">
+    <link rel="stylesheet" href="{ms:globalskin.url/}/css/list.css">
+    <link rel="stylesheet" href="{ms:globalskin.url/}/css/index.css" >
+</head>
+<body>
+    {ms:include filename=head.htm/} 
+    <div class="wrap grow gmt30 gpack" style="min-height:376px;margin-top:30px;width:960px;">
+        <div class="gspan-6 gprefix-3 gsuffix-3 side" style="width:350px">
+           <div class="side-title">你还可以用第三方帐号登录</div>
+           <div class="extoauth2"> 
+               <a rel="nofollow" class="icon weibo" href="">微博帐号登录</a> 
+               <a rel="nofollow" class="icon qq" href="">qq帐号登录</a> 
+               <a rel="nofollow" class="icon douban" href="">豆瓣帐号登录</a> 
+           </div>
+           <p style="font-family:宋体;">还没有账号？<a rel="nofollow" id="changeVcode" href="{ms:global.host/}/register.do">马上注册</a> </p>
+        </div>
+        <div class="gspan-15 gprefix-4 main" style="width:575px">                
+            <h1>欢迎登录</h1>
+            <form class="gform" id="loginForm" method="POST" >
+                <p class="gform-box">           
+                    <input class="gbtxt" id="username" maxlength="15" name="peopleName" placeholder=请输入用户名 type="text">
+                </p>
+                <p class="gform-box" style="margin-bottom:15px;">
+                    <input class="gbtxt" id="password" name="peoplePassword" placeholder="密码" type="password">
+                </p>    
+                <p class="gform-box" style="margin-bottom:0px">
+                    <input type="hidden" name="isImgCode" value="true" />
+                    <input class="gbtxt" id="rand_code" maxlength="4" style="width: 259px;" name="rand_code"  placeholder="验证码" type="text" value="" />
+					<img id="yzmimg" class="ms-w32 ms-h16" style="position: relative;top: 9px;height:26px;width:86px;" src="{ms:global.host/}/code" onclick="this.src='{ms:global.host/}/code?t='+new Date().getTime()"/>
+                </p>   
+                <div class="infor-tips"></div>
+                <p class="gform-box">
+                    <button type="button" id="login-button" class="gform-submit greg-btn" >登录</button>
+                </p>
+            </form>
+        </div>
+    </div>  
+    {ms:include filename=foot.htm/}   
+</body>
+</html>
+<script>
+	var userName = $("#username");
+	var userPassword = $("#password");
+    var userCode = $("#rand_code");
+    //登录开始   
+    $("#username").blur(function(){
+    	$(".tip").remove();
+    	if(userName.val() == 0){
+    		userName.after("<span class='tip'>用户名是必填的</span>");
+    	}
+    });
+    $("#password").blur(function(){
+    	$(".passTips").remove();
+    	if(userPassword.val().length == 0){
+    		userPassword.after("<span class='passTips'>密码是必填的</span>");
+    	}
+    });
+    $("#login-button").click(function () {
+      ms.load(["ms","ms.people"], function(ms,mpeople) {
+        $("span").remove();
+        mpeople.checkLogin($("#loginForm").serialize(),function(json){//调用方法
+          if(json.result){
+            ms.alert("登录成功")
+            location.href="{ms:global.host/}";
+          }else{
+            ms.alert(json.resultMsg)
+          }
+        })
+      });
+    })
+</script>

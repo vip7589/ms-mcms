@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.0.xsd
+		http://www.springframework.org/schema/context  http://www.springframework.org/schema/context/spring-context-4.0.xsd"
+	default-lazy-init="true">
+
+	<description>shiro权限配置文件</description>
+	<!-- 加载配置属性文件 -->
+	<context:property-placeholder location="classpath:ms.properties" />
+
+	<!-- Shiro权限过滤过滤器定义 -->
+	<bean name="shiroFilterChainDefinitions" class="java.lang.String">
+		<constructor-arg>
+			<value>
+				/static/** = anon
+				/html/** = anon
+				${managerPath}/login.do = anon
+				${managerPath}/checkLogin.do = anon
+				${managerPath}/logout = logout
+				${managerPath}/** = user
+			</value>
+		</constructor-arg>
+	</bean>
+
+	<!-- 安全认证过滤器 -->
+	<bean id="shiroFilter" class="org.apache.shiro.spring.web.ShiroFilterFactoryBean">
+		<property name="securityManager" ref="securityManager" /><!-- 
+			<property name="loginUrl" value="${cas.server}?service=${cas.project}${managerPath}/cas" 
+			/> -->
+		<property name="loginUrl" value="${managerPath}/login.do" />
+		<property name="successUrl" value="${managerPath}/index.do" />
+		<property name="filterChainDefinitions">
+			<ref bean="shiroFilterChainDefinitions" />
+		</property>
+	</bean>
+
+	<!-- 安全管理器配置 -->
+	<bean id="securityManager" class="org.apache.shiro.web.mgt.DefaultWebSecurityManager">
+		<property name="realm" ref="baseAuthRealm" />
+		<property name="sessionManager" ref="sessionManager" />
+		<property name="cacheManager" ref="cacheManager" />
+	</bean>
+
+	<!-- 用户授权信息Cache -->
+	<bean id="cacheManager" class="org.apache.shiro.cache.MemoryConstrainedCacheManager" />
+	<bean id="shiroCacheManager" class="org.apache.shiro.cache.ehcache.EhCacheManager">
+		<property name="cacheManager" ref="cacheManager" />
+	</bean>
+
+	<!-- 項目自定义的Realm -->
+	<bean id="baseAuthRealm" class="com.mingsoft.basic.security.BaseAuthRealm">
+		<property name="cacheManager" ref="cacheManager" />
+	</bean>
+	<!-- 设置系统SESSIONID, 默认为: JSESSIONID -->
+	<bean id="sessionIdCookie" class="org.apache.shiro.web.servlet.SimpleCookie">
+		<constructor-arg name="name" value="ms.session.id" />
+	</bean>
+	<!-- ID生成器 -->
+	<bean id="sessionIdGenerator"
+		class="org.apache.shiro.session.mgt.eis.JavaUuidSessionIdGenerator" />
+	<!-- session持久化 -->
+	<bean id="sessionDAO" class="net.mingsoft.basic.security.session.CacheSessionDAO">
+		<property name="sessionIdGenerator" ref="sessionIdGenerator" />
+		<property name="activeSessionsCacheName" value="activeSessionsCache" />
+		<property name="cacheManager" ref="cacheManager" />
+	</bean>
+
+	<!-- 会话管理配置 -->
+	<bean id="sessionManager" class="org.apache.shiro.web.session.mgt.DefaultWebSessionManager">
+		<property name="sessionDAO" ref="sessionDAO" />
+		<!-- 会话超时时间，单位：毫秒 -->
+		<property name="globalSessionTimeout" value="${session.timeout}" />
+
+		<!-- 定时清理失效会话, 清理用户直接关闭浏览器造成的孤立会话 -->
+		<property name="sessionValidationInterval" value="${session.validation.interval}" />
+		<property name="sessionValidationSchedulerEnabled" value="true" />
+		<property name="sessionIdCookie" ref="sessionIdCookie" />
+		<property name="sessionIdCookieEnabled" value="true" />
+	</bean>
+
+	<!-- 保证实现了Shiro内部lifecycle函数的bean执行 -->
+	<bean id="lifecycleBeanPostProcessor" class="org.apache.shiro.spring.LifecycleBeanPostProcessor" />
+
+	<!-- 开启Shiro的注释 -->
+	<bean
+		class="org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator"
+		depends-on="lifecycleBeanPostProcessor">
+		<property name="proxyTargetClass" value="true" />
+	</bean>
+	<bean
+		class="org.apache.shiro.spring.security.interceptor.AuthorizationAttributeSourceAdvisor">
+		<property name="securityManager" ref="securityManager" />
+	</bean>
+
+
+</beans>

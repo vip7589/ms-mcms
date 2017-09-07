@@ -1,0 +1,59 @@
+
+
+    <div class="navbar navbar-default" style="background-color: #fff;" id="navbar">
+      <div class="container">
+        <div class="navbar-header">
+          <a class="navbar-brand icon-logo" href="{ms:global.url/}"  title="铭飞科技">铭飞科技</a>
+          <div id="bdadm-1019183" class="navbar-slogan"></div>
+          <!--搜索-->
+          <form id="searchDataForm" class="navbar-form navbar-right" action="{ms:global.host/}/cms/1/search.do" method="post">
+            <div class="form-group">
+            <!--表单的name值不能改变-->	 
+              <input class="form-control"  type="text" name="basic_title" maxlength="50" placeholder="搜索课程、笔记、帖子、文章"  />
+            </div>
+            <input type="submit"  class="btn icon-search"   value="搜索">
+          </form>
+        </div>
+        <div class="collapse navbar-collapse" id="navbarCollapse">
+          <ul class="nav navbar-nav navbar-right" id="unlogined">
+            <li class="navbar-sign">
+              <a href="{ms:global.host/}/register.do" >注册</a>
+            </li>
+            <li class="navbar-login">
+              <a href="{ms:global.host/}/login.do">登录</a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="nav nav-main" id="navMain">
+        <ul class="container">
+          <li class="active"><a href="{ms:global.url/}">首页</a></li>
+          <li><a href="{ms:global.url/}/61/index.html">课程</a></li>
+          <li><a href="{ms:global.url/}/59/index.html">专题</a></li>
+          <li><a href="{ms:global.url/}/106/index.html">演讲</a></li>
+<!--          <li><a href="javascript:void(0);">社区</a></li>   
+-->
+        </ul>
+    </div>
+     <!--登录后右上角-->
+    <ul class="login-corner" style="display:none">            
+      <!--li class="navbar-notice" id="navbarNotice">                 
+          <a href="javascript:void 0;" >
+            <span class="mooc-notice"></span><span class="navbar-notice-txt">通知</span>
+          </a>          
+      </li-->             
+      <li class="navbar-settings dropdown" id="navbarSettings">             
+        <a class="dropdown-toggle" href="javascript:void 0;">
+          <img width="30" height="30" src="{ms:globalskin.url/}/images/face.png" alt="">
+          <span class="navbar-settings-id"></span><span class="caret"></span>
+        </a>                 
+        <ul class="dropdown-menu" id="settingsBlock">                     
+          <li style="    background-color: #fff;">
+            <a href="{ms:global.host/}/people/userCenter.do" >个人主页</a>
+          </li>                                                                               
+          <li><a class="quitLogin" style="cursor: pointer;">退出</a></li>                 
+        </ul>             
+      </li>         
+    </ul>
+    
